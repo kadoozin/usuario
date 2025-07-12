@@ -15,10 +15,22 @@ public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "numero")
     private Long numero;
+
+    @Column(name = "rua")
     private String rua;
+
+    @Column(name = "complemento")
     private String complemento;
+
+    @Column(name = "cep")
     private String cep;
+
+    @Column(name = "cidade")
     private String cidade;
+
+    @Column(name = "estado")
     private String estado;
 }
