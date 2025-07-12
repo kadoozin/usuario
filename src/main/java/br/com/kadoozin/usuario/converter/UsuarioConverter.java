@@ -14,6 +14,7 @@ import java.util.List;
 public class UsuarioConverter {
     public Usuario converterParaUsuario(UsuarioDTO usuarioDTO){
         return Usuario.builder()
+                .id(usuarioDTO.getId())
                 .nome(usuarioDTO.getNome())
                 .sobrenome(usuarioDTO.getSobrenome())
                 .dataNascimento(usuarioDTO.getDataNascimento())
@@ -30,6 +31,7 @@ public class UsuarioConverter {
 
     public Endereco converterParaEndereco(EnderecoDTO enderecoDTO){
         return Endereco.builder()
+                .id(enderecoDTO.getId())
                 .numero(enderecoDTO.getNumero())
                 .rua(enderecoDTO.getRua())
                 .complemento(enderecoDTO.getComplemento())
@@ -45,6 +47,7 @@ public class UsuarioConverter {
 
     public Telefone converterParaTelefone(TelefoneDTO telefoneDTO){
         return Telefone.builder()
+                .id(telefoneDTO.getId())
                 .numero(telefoneDTO.getNumero())
                 .ddd(telefoneDTO.getDdd())
                 .build();
@@ -52,6 +55,7 @@ public class UsuarioConverter {
 
     public UsuarioDTO converterParaUsuarioDTO(Usuario usuario){
         return UsuarioDTO.builder()
+                .id(usuario.getId())
                 .nome(usuario.getNome())
                 .sobrenome(usuario.getSobrenome())
                 .dataNascimento(usuario.getDataNascimento())
@@ -68,6 +72,7 @@ public class UsuarioConverter {
 
     public EnderecoDTO converterParaEndereco(Endereco endereco){
         return EnderecoDTO.builder()
+                .id(endereco.getId())
                 .numero(endereco.getNumero())
                 .rua(endereco.getRua())
                 .complemento(endereco.getComplemento())
@@ -83,6 +88,7 @@ public class UsuarioConverter {
 
     public TelefoneDTO converterParaTelefoneDTO (Telefone telefone){
         return TelefoneDTO.builder()
+                .id(telefone.getId())
                 .numero(telefone.getNumero())
                 .ddd(telefone.getDdd())
                 .build();
