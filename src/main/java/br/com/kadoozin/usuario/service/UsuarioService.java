@@ -5,8 +5,17 @@ import br.com.kadoozin.usuario.dto.UsuarioDTO;
 import br.com.kadoozin.usuario.entities.Usuario;
 import br.com.kadoozin.usuario.exceptions.ConflictException;
 import br.com.kadoozin.usuario.exceptions.ResourceNotFoundException;
+import br.com.kadoozin.usuario.exceptions.UnauthorizedException;
+import br.com.kadoozin.usuario.repository.EnderecoRepository;
+import br.com.kadoozin.usuario.repository.TelefoneRepository;
 import br.com.kadoozin.usuario.repository.UsuarioRepository;
+import br.com.kadoozin.usuario.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +28,30 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioConverter usuarioConverter;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final EnderecoRepository enderecoRepository;
+    private final TelefoneRepository telefoneRepository;
 
     public UsuarioDTO criaUsuario(UsuarioDTO usuarioDTO){
         emailExiste(usuarioDTO.getEmail());
         usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
         Usuario usuario = usuarioConverter.converterParaUsuario(usuarioDTO);
         return usuarioConverter.converterParaUsuarioDTO(usuarioRepository.save(usuario));
+    }
+
+    public String autentificarUsuario(UsuarioDTO usuarioDTO){
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            usuarioDTO.getEmail(),
+                            usuarioDTO.getSenha()
+                    )
+            );
+            return "Bearer " + jwtUtil.generateToken(authentication.getName());
+        }catch (BadCredentialsException | UsernameNotFoundException e){
+            throw  new UnauthorizedException("Usuario ou senha inválidos", e);
+        }
     }
 
     public void emailExiste(String email){
@@ -35,6 +62,15 @@ public class UsuarioService {
 
     public boolean verificaEmailExistente(String email){
         return usuarioRepository.existsByEmail(email);
+    }
+
+    public UsuarioDTO buscarPorEmail(String email){
+        return usuarioConverter.converterParaUsuarioDTO(
+                usuarioRepository.findByEmail(email)
+                        .orElseThrow(
+                                () -> new ResourceNotFoundException("Email não foi encontrado!" + email)
+                        )
+        );
     }
 
     public UsuarioDTO buscarUsuarioPorId(Long id) {

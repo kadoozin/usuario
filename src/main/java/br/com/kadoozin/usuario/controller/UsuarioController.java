@@ -20,15 +20,25 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.criaUsuario(usuarioDTO));
     }
 
-    @DeleteMapping("/deletar/{id}")
-    public ResponseEntity<Void> deletarUsuarioPorId(@PathVariable Long id){
-        usuarioService.deletarUsuarioPorId(id);
-        return ResponseEntity.ok().build();
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO){
+        return ResponseEntity.ok(usuarioService.autentificarUsuario(usuarioDTO));
+    }
+
+    @GetMapping("/buscar/")
+    public ResponseEntity<UsuarioDTO> buscarUsuarioPorId(@RequestParam String email){
+        return ResponseEntity.ok(usuarioService.buscarPorEmail(email));
     }
 
     @GetMapping("/buscar/{id}")
     public ResponseEntity<UsuarioDTO> buscarUsuarioPorId(@PathVariable Long id){
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id));
+    }
+
+    @DeleteMapping("/deletar/{id}")
+    public ResponseEntity<Void> deletarUsuarioPorId(@PathVariable Long id){
+        usuarioService.deletarUsuarioPorId(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/listar")
