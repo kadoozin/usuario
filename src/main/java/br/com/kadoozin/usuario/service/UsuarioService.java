@@ -64,11 +64,11 @@ public class UsuarioService {
         return usuarioRepository.existsByEmail(email);
     }
 
-    public UsuarioDTO buscarPorEmail(String email){
+    public UsuarioDTO buscarUsuarioPorEmail(String email){
         return usuarioConverter.converterParaUsuarioDTO(
                 usuarioRepository.findByEmail(email)
                         .orElseThrow(
-                                () -> new ResourceNotFoundException("Email não foi encontrado!" + email)
+                                () -> new ResourceNotFoundException("Este email é inválido ou inexistente")
                         )
         );
     }
@@ -91,6 +91,26 @@ public class UsuarioService {
         return usuarios.stream()
                 .map(usuarioConverter :: converterParaUsuarioDTO)
                 .collect(Collectors.toList());
+    }
+
+    public UsuarioDTO atualizarDadosUsuario(String token, UsuarioDTO dto){
+
+        //Busca o email do usuario através do token (tira a obrigatoriedade do email)
+        String email = jwtUtil.extrairEmailToken(token.substring(7));
+        //Busca os dados do usuario no bando de dados!
+        Usuario usuarioEntity = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Email não encontrado"));
+
+        //Mesclou os dados que recebemos na requisição DTO com os dados do bando de dados!
+        Usuario usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
+
+        //Criptografia de senha
+        if (dto.getSenha() != null && !dto.getSenha().isBlank()){
+            usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+        }
+
+        //Salva no banco e retorna como DTO
+        return usuarioConverter.converterParaUsuarioDTO(usuarioRepository.save(usuario));
     }
 
 

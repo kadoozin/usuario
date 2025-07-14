@@ -25,13 +25,19 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.autentificarUsuario(usuarioDTO));
     }
 
+    @PutMapping("/atualizar/")
+    public ResponseEntity<UsuarioDTO> atualizaDadosUsuario(@RequestBody UsuarioDTO usuarioDTO,
+                                                           @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(usuarioService.atualizarDadosUsuario(token, usuarioDTO));
+    }
+
     @GetMapping("/buscar/")
-    public ResponseEntity<UsuarioDTO> buscarUsuarioPorId(@RequestParam String email){
-        return ResponseEntity.ok(usuarioService.buscarPorEmail(email));
+    public ResponseEntity<UsuarioDTO> buscarUsuarioPorEmail(@RequestParam String email){
+        return ResponseEntity.ok(usuarioService.buscarUsuarioPorEmail(email));
     }
 
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<UsuarioDTO> buscarUsuarioPorId(@PathVariable Long id){
+    public ResponseEntity<UsuarioDTO> buscarUsuarioPorEmail(@PathVariable Long id){
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id));
     }
 

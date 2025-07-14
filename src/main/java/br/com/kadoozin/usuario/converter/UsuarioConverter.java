@@ -6,12 +6,20 @@ import br.com.kadoozin.usuario.dto.UsuarioDTO;
 import br.com.kadoozin.usuario.entities.Endereco;
 import br.com.kadoozin.usuario.entities.Telefone;
 import br.com.kadoozin.usuario.entities.Usuario;
+import br.com.kadoozin.usuario.repository.TelefoneRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class UsuarioConverter {
+
+    private final TelefoneRepository telefoneRepository;
+
+    public UsuarioConverter(TelefoneRepository telefoneRepository) {
+        this.telefoneRepository = telefoneRepository;
+    }
+
     public Usuario converterParaUsuario(UsuarioDTO usuarioDTO){
         return Usuario.builder()
                 .id(usuarioDTO.getId())
@@ -91,6 +99,19 @@ public class UsuarioConverter {
                 .id(telefone.getId())
                 .numero(telefone.getNumero())
                 .ddd(telefone.getDdd())
+                .build();
+    }
+
+    public Usuario updateUsuario(UsuarioDTO usuarioDTO, Usuario entity){
+        return Usuario.builder()
+                .id(entity.getId())
+                .nome(usuarioDTO.getNome() != null ? usuarioDTO.getNome() : entity.getNome())
+                .sobrenome(usuarioDTO.getSobrenome() != null ? usuarioDTO.getSobrenome() : entity.getSobrenome())
+                .dataNascimento(usuarioDTO.getDataNascimento() != null ? usuarioDTO.getDataNascimento() : entity.getDataNascimento())
+                .email(usuarioDTO.getEmail() != null ? usuarioDTO.getEmail() : entity.getEmail())
+                .senha(entity.getSenha())
+                .enderecos(entity.getEnderecos())
+                .telefones(entity.getTelefones())
                 .build();
     }
 }
