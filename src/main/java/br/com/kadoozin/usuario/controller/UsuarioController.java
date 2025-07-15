@@ -1,5 +1,7 @@
 package br.com.kadoozin.usuario.controller;
 
+import br.com.kadoozin.usuario.dto.EnderecoDTO;
+import br.com.kadoozin.usuario.dto.TelefoneDTO;
 import br.com.kadoozin.usuario.dto.UsuarioDTO;
 import br.com.kadoozin.usuario.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/buscar/")
-    public ResponseEntity<UsuarioDTO> buscarUsuarioPorEmail(@RequestParam String email){
+    public ResponseEntity<UsuarioDTO> buscarUsuarioPorEmail(@RequestParam("email") String email){
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorEmail(email));
     }
 
@@ -50,5 +52,17 @@ public class UsuarioController {
     @GetMapping("/listar")
     public ResponseEntity<List<UsuarioDTO>> listarUsuario(){
         return ResponseEntity.ok(usuarioService.listarUsuarios());
+    }
+
+    @PutMapping("/endereco/")
+    public ResponseEntity<EnderecoDTO> atualizaDadosDoEnderecoPorId(@RequestBody EnderecoDTO dto,
+                                                                    @RequestParam ("id") Long id){
+        return ResponseEntity.ok(usuarioService.atualizaDadosDoEnderecoPorId(id, dto));
+    }
+
+    @PutMapping("/telefone/")
+    public ResponseEntity<TelefoneDTO> atualizaDadosDoTelefonePorId(@RequestBody TelefoneDTO dto,
+                                                                    @RequestParam ("id") Long id){
+        return ResponseEntity.ok(usuarioService.atualizaDadosDoTelefonePorId(id, dto));
     }
 }

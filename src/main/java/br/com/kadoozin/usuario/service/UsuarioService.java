@@ -1,7 +1,11 @@
 package br.com.kadoozin.usuario.service;
 
 import br.com.kadoozin.usuario.converter.UsuarioConverter;
+import br.com.kadoozin.usuario.dto.EnderecoDTO;
+import br.com.kadoozin.usuario.dto.TelefoneDTO;
 import br.com.kadoozin.usuario.dto.UsuarioDTO;
+import br.com.kadoozin.usuario.entities.Endereco;
+import br.com.kadoozin.usuario.entities.Telefone;
 import br.com.kadoozin.usuario.entities.Usuario;
 import br.com.kadoozin.usuario.exceptions.ConflictException;
 import br.com.kadoozin.usuario.exceptions.ResourceNotFoundException;
@@ -33,14 +37,14 @@ public class UsuarioService {
     private final EnderecoRepository enderecoRepository;
     private final TelefoneRepository telefoneRepository;
 
-    public UsuarioDTO criaUsuario(UsuarioDTO usuarioDTO){
+    public UsuarioDTO criaUsuario(UsuarioDTO usuarioDTO) {
         emailExiste(usuarioDTO.getEmail());
         usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
         Usuario usuario = usuarioConverter.converterParaUsuario(usuarioDTO);
         return usuarioConverter.converterParaUsuarioDTO(usuarioRepository.save(usuario));
     }
 
-    public String autentificarUsuario(UsuarioDTO usuarioDTO){
+    public String autentificarUsuario(UsuarioDTO usuarioDTO) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -49,51 +53,47 @@ public class UsuarioService {
                     )
             );
             return "Bearer " + jwtUtil.generateToken(authentication.getName());
-        }catch (BadCredentialsException | UsernameNotFoundException e){
-            throw  new UnauthorizedException("Usuario ou senha inválidos", e);
+        } catch (BadCredentialsException | UsernameNotFoundException e) {
+            throw new UnauthorizedException("Usuario ou senha inválidos", e);
         }
     }
 
-    public void emailExiste(String email){
-        if (verificaEmailExistente(email)){
-            throw new ConflictException("Email já cadastrado: " +  email);
+    public void emailExiste(String email) {
+        if (verificaEmailExistente(email)) {
+            throw new ConflictException("Email já cadastrado: " + email);
         }
     }
 
-    public boolean verificaEmailExistente(String email){
+    public boolean verificaEmailExistente(String email) {
         return usuarioRepository.existsByEmail(email);
     }
 
-    public UsuarioDTO buscarUsuarioPorEmail(String email){
+    public UsuarioDTO buscarUsuarioPorEmail(String email) {
         return usuarioConverter.converterParaUsuarioDTO(
                 usuarioRepository.findByEmail(email)
-                        .orElseThrow(
-                                () -> new ResourceNotFoundException("Este email é inválido ou inexistente")
-                        )
+                        .orElseThrow(() -> new ResourceNotFoundException("Este email é inválido ou inexistente"))
         );
     }
 
     public UsuarioDTO buscarUsuarioPorId(Long id) {
         return usuarioConverter.converterParaUsuarioDTO(
                 usuarioRepository.findById(id)
-                        .orElseThrow(
-                                () -> new ResourceNotFoundException("Usuario de ID: " + id + " nao foi encontrado!")
-                        )
+                        .orElseThrow(() -> new ResourceNotFoundException("Usuario de ID: " + id + " nao foi encontrado!"))
         );
     }
 
-    public void deletarUsuarioPorId(Long id){
+    public void deletarUsuarioPorId(Long id) {
         usuarioRepository.deleteById(id);
     }
 
-    public List<UsuarioDTO> listarUsuarios(){
+    public List<UsuarioDTO> listarUsuarios() {
         List<Usuario> usuarios = usuarioRepository.findAll();
         return usuarios.stream()
-                .map(usuarioConverter :: converterParaUsuarioDTO)
+                .map(usuarioConverter::converterParaUsuarioDTO)
                 .collect(Collectors.toList());
     }
 
-    public UsuarioDTO atualizarDadosUsuario(String token, UsuarioDTO dto){
+    public UsuarioDTO atualizarDadosUsuario(String token, UsuarioDTO dto) {
 
         //Busca o email do usuario através do token (tira a obrigatoriedade do email)
         String email = jwtUtil.extrairEmailToken(token.substring(7));
@@ -102,15 +102,29 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Email não encontrado"));
 
         //Mesclou os dados que recebemos na requisição DTO com os dados do bando de dados!
-        Usuario usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
+        Usuario usuario = usuarioConverter.mergeUsuarioComDTO(dto, usuarioEntity);
 
         //Criptografia de senha
-        if (dto.getSenha() != null && !dto.getSenha().isBlank()){
+        if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
             usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         }
 
         //Salva no banco e retorna como DTO
         return usuarioConverter.converterParaUsuarioDTO(usuarioRepository.save(usuario));
+    }
+
+    public EnderecoDTO atualizaDadosDoEnderecoPorId(Long id, EnderecoDTO enderecoDTO) {
+        Endereco entity = enderecoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Id não encontrado " + id));
+        Endereco endereco = usuarioConverter.mergeEnderecoComDTO(enderecoDTO, entity);
+        return usuarioConverter.converterParaEnderecoDTO(enderecoRepository.save(endereco));
+    }
+
+    public TelefoneDTO atualizaDadosDoTelefonePorId(Long id, TelefoneDTO dto) {
+        Telefone entity = telefoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Id não encontrado " + id));
+        Telefone telefone = usuarioConverter.mergeTelefoneComDTO(dto, entity);
+        return usuarioConverter.converterParaTelefoneDTO(telefoneRepository.save(telefone));
     }
 
 
