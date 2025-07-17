@@ -10,8 +10,8 @@ import lombok.*;
 @Entity
 @Table(name = "tb_endereco")
 @Builder
-
 public class Endereco {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,4 +33,8 @@ public class Endereco {
 
     @Column(name = "estado")
     private String estado;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 }

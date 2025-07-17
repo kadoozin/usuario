@@ -41,11 +41,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/auth").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/usuario/deletar/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuario/buscar/{id}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuario/buscar/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuario/buscar").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuario/listar").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/usuario/atualizar/telefone").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/usuario/atualizar/endereco").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuario/endereco/adicionar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuario/telefone/adicionar").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/usuario/atualizar/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario/criar").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario/login").permitAll()

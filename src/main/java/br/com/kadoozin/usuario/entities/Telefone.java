@@ -10,8 +10,8 @@ import lombok.*;
 @Entity
 @Table(name = "tb_telefone")
 @Builder
-
 public class Telefone {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,4 +21,8 @@ public class Telefone {
 
     @Column(name = "ddd")
     private String ddd;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 }

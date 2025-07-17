@@ -36,12 +36,10 @@ public class Usuario implements UserDetails {
     @Column(name = "senha")
     private String senha;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Endereco> enderecos;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usario_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Telefone> telefones;
 
     @Override

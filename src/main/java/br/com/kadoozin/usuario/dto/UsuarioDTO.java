@@ -1,7 +1,5 @@
 package br.com.kadoozin.usuario.dto;
 
-import br.com.kadoozin.usuario.entities.Endereco;
-import br.com.kadoozin.usuario.entities.Telefone;
 import lombok.*;
 
 import java.time.LocalDate;
