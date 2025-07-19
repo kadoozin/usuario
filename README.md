@@ -58,14 +58,15 @@ API REST feita com **Spring Boot** para cadastro e gerenciamento de usuários, i
 
 ## 🧪 Endpoints Básicos
 
-| Método | Rota              | Descrição                           |
-|--------|-------------------|-------------------------------------|
-| POST   | `/usuario/criar`  | Cadastra novo usuário               |
-| POST   | `/auth/login`     | Login com email/senha               |
-| GET    | `/usuario/listar` | Lista todos os usuários             |
-| POST   | `/endereco`       | Cadastra endereço (JWT obrigatório) |
-| POST   | `/telefone`       | Cadastra telefone (JWT obrigatório) |
-| PUT    | `/usuario`        | Atualiza dados do usuário (via JWT) |
+| Método | Rota                                 | Descrição                               |
+|--------|--------------------------------------|-----------------------------------------|
+| POST   | `/usuario/criar`                     | Cadastra novo usuário                   |
+| POST   | `/usuario/login`                     | Login com email/senha                   |
+| GET    | `/usuario/listar`                    | Lista todos os usuários                 |
+| POST   | `/usuario/endereco/adicionar`        | Cadastra endereço (JWT obrigatório)     |
+| POST   | `/usuario/telefone/adicionar`        | Cadastra telefone (JWT obrigatório)     |
+| PUT    | `/usuario/atualizar`                 | Atualiza dados do usuário (via JWT)     |
+| GET    | `/usuario/buscar/`                   | Buscar usuario por ID (JWT obrigatório) | 
 
 ---
 
