@@ -66,15 +66,29 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.atualizaDadosDoTelefonePorId(id, dto));
     }
 
-    @PostMapping("/endereco/adicionar")
+    @PostMapping("/adicionar/endereco")
     public ResponseEntity<EnderecoDTO> adicionaNovoEndereco(@RequestHeader("Authorization") String token,
                                                             @RequestBody EnderecoDTO dto) {
         return ResponseEntity.ok(usuarioService.adicionaNovoEndereco(token, dto));
     }
 
-    @PostMapping("/telefone/adicionar")
+    @PostMapping("/adicionar/telefone")
     public ResponseEntity<TelefoneDTO> adicionaNovoTelefone(@RequestHeader("Authorization") String token,
                                                             @RequestBody TelefoneDTO dto) {
         return ResponseEntity.ok(usuarioService.adicionaNovoTelefone(token, dto));
+    }
+
+    @DeleteMapping("/deletar/endereco/{id}")
+    public ResponseEntity<Void> deletaEnderecoPorId(@RequestHeader("Authorization") String token,
+                                                    @PathVariable Long id) {
+        usuarioService.deletarEnderecoPorId(token, id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/deletar/telefone/{id}")
+    public ResponseEntity<Void> deletaTelefonePorId(@RequestHeader("Authorization") String token,
+                                                    @PathVariable Long id) {
+        usuarioService.deletarTelefonePorId(token, id);
+        return ResponseEntity.ok().build();
     }
 }

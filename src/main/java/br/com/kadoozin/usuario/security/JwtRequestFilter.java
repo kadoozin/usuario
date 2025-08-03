@@ -12,56 +12,66 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-// Define a classe JwtRequestFilter, que estende OncePerRequestFilter
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    // Define propriedades para armazenar instâncias de JwtUtil e UserDetailsService
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
-    // Construtor que inicializa as propriedades com instâncias fornecidas
     public JwtRequestFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
 
-    // Método chamado uma vez por requisição para processar o filtro
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        System.out.println("Requisição para: " + path);
+
         if (path.equals("/usuario/login") || path.equals("/usuario/criar")) {
+            System.out.println("Endpoint público, liberando acesso.");
             chain.doFilter(request, response);
             return;
         }
 
-        // Obtém o valor do header "Authorization" da requisição
         final String authorizationHeader = request.getHeader("Authorization");
+        System.out.println("Authorization header: " + authorizationHeader);
 
-        // Verifica se o cabeçalho existe e começa com "Bearer "
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            // Extrai o token JWT do cabeçalho
             final String token = authorizationHeader.substring(7);
-            // Extrai o nome de usuário do token JWT
-            final String username = jwtUtil.extrairEmailDoToken(token);
+            System.out.println("Token extraído: " + token);
 
-            // Se o nome de usuário não for nulo e o usuário não estiver autenticado ainda
+            String username = null;
+            try {
+                username = jwtUtil.extrairEmailDoToken(token);
+                System.out.println("Email extraído do token: " + username);
+            } catch (Exception e) {
+                System.out.println("Erro ao extrair email do token: " + e.getMessage());
+            }
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Carrega os detalhes do usuário a partir do nome de usuário
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                // Valida o token JWT
-                if (jwtUtil.validateToken(token, username)) {
-                    // Cria um objeto de autenticação com as informações do usuário
+                UserDetails userDetails = null;
+                try {
+                    userDetails = userDetailsService.loadUserByUsername(username);
+                    System.out.println("UserDetails carregado: " + userDetails.getUsername());
+                } catch (Exception e) {
+                    System.out.println("Erro ao carregar usuário: " + e.getMessage());
+                }
+
+                if (userDetails != null && jwtUtil.validateToken(token, username)) {
+                    System.out.println("Token válido, configurando autenticação.");
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
-                    // Define a autenticação no contexto de segurança
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    System.out.println("Token inválido ou usuário nulo.");
                 }
             }
+        } else {
+            System.out.println("Authorization header ausente ou inválido.");
         }
 
-        // Continua a cadeia de filtros, permitindo que a requisição prossiga
         chain.doFilter(request, response);
     }
 }

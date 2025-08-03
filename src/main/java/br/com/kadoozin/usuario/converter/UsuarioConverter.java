@@ -23,8 +23,8 @@ public class UsuarioConverter {
                 .dataNascimento(dto.getDataNascimento())
                 .email(dto.getEmail())
                 .senha(dto.getSenha())
-                .enderecos(converterListaEnderecoEntity(dto.getEnderecos()))
-                .telefones(converterListaTelefoneEntity(dto.getTelefones()))
+                .enderecos(dto.getEnderecos() != null ? converterListaEnderecoEntity(dto.getEnderecos()) : null)
+                .telefones(dto.getTelefones() != null ? converterListaTelefoneEntity(dto.getTelefones()) : null)
                 .build();
     }
 
@@ -37,8 +37,8 @@ public class UsuarioConverter {
                 .dataNascimento(entity.getDataNascimento())
                 .email(entity.getEmail())
                 .senha(entity.getSenha())
-                .enderecos(converterListaEnderecoDTO(entity.getEnderecos()))
-                .telefones(converterListaTelefoneDTO(entity.getTelefones()))
+                .enderecos(entity.getEnderecos() != null ? converterListaEnderecoDTO(entity.getEnderecos()) : null)
+                .telefones(entity.getTelefones() != null ? converterListaTelefoneDTO(entity.getTelefones()) : null)
                 .build();
     }
 

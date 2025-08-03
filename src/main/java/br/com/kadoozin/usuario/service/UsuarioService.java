@@ -131,6 +131,19 @@ public class UsuarioService {
         return usuarioConverter.converterParaEnderecoDTO(enderecoRepository.save(endereco));
     }
 
+    public void deletarEnderecoPorId(String token, Long enderecoId) {
+        String email = jwtUtil.extrairEmailDoToken(token.substring(7));
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado!"));
+        Endereco endereco = enderecoRepository.findById(enderecoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado!"));
+        if (!endereco.getUsuario().getId().equals(usuario.getId())) {
+            throw new UnauthorizedException("Endereço não pertence ao usuário logado!");
+        }
+        enderecoRepository.delete(endereco);
+    }
+
+
     public TelefoneDTO adicionaNovoTelefone(String token, TelefoneDTO dto) {
         String email = jwtUtil.extrairEmailDoToken(token.substring(7));
         Usuario usuario = usuarioRepository.findByEmail(email)
@@ -138,5 +151,17 @@ public class UsuarioService {
         Telefone telefone = usuarioConverter.converterParaTelefoneEntity(dto);
         telefone.setUsuario(usuario);
         return usuarioConverter.converterParaTelefoneDTO(telefoneRepository.save(telefone));
+    }
+
+    public void deletarTelefonePorId(String token, Long telefoneId){
+        String email = jwtUtil.extrairEmailDoToken(token.substring(7));
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado!"));
+        Telefone telefone = telefoneRepository.findById(telefoneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Telefone não encontrado!"));
+        if (!telefone.getUsuario().getId().equals(usuario.getId())){
+            throw new UnauthorizedException("Telefone não pertence ao usuário logado!");
+        }
+        telefoneRepository.delete(telefone);
     }
 }

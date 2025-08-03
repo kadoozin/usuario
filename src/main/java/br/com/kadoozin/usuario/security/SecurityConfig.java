@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/usuario/buscar/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuario/buscar").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuario/listar").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuario").permitAll()  // <<< liberou aqui
                         .requestMatchers(HttpMethod.PUT, "/usuario/atualizar/telefone").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/usuario/atualizar/endereco").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario/endereco/adicionar").permitAll()
@@ -55,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/usuario/**").authenticated()
                         .anyRequest().authenticated()
                 )
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
