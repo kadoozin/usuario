@@ -3,7 +3,10 @@ package br.com.kadoozin.usuario.controller;
 import br.com.kadoozin.usuario.dto.EnderecoDTO;
 import br.com.kadoozin.usuario.dto.TelefoneDTO;
 import br.com.kadoozin.usuario.dto.UsuarioDTO;
+import br.com.kadoozin.usuario.security.SecurityConfig;
 import br.com.kadoozin.usuario.service.UsuarioService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuario")
 @RequiredArgsConstructor
+@Tag(name = "Usuário", description = "Cadastro e login de usuários")
+@SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME)
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
